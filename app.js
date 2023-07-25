@@ -7,10 +7,26 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 const userRouter = require('./routers/user-router'); 
+const commentRouter = require('./routers/comment-router');
 
 app.use(express.json());
 
 // роутеры
+app.use('/user/:userId/comment', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, commentRouter);
+
+app.use('/blog/:articleId/comment', (req, res, next) => {
+    req.articleId = req.params.articleId;
+    next();
+}, commentRouter);
+
+app.use('/portfolio/:projectId/comment', (req, res, next) => {
+    req.projectId = req.params.projectId;
+    next();
+}, commentRouter);
+
 app.use('/user', userRouter);
 
 async function start() {
