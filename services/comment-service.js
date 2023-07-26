@@ -15,29 +15,16 @@ class CommentService {
         return CommentModel.find({projectId});
     }
 
-    getUserById(id) {
-        return UserModel.findById(id);
-    }
-
-    async createUser(userDto) {
-        const candidate = await UserModel.findOne({login: userDto.login});
-        if (candidate) {
-            throw new Error("Пользователь с таким логином уже существует");
-        }
-
-        const hashedPassword = await bcrypt.hash(userDto.password, 3);
-        const user = await UserModel.create({
-            login: userDto.login,
-            password: hashedPassword,
-            name: {
-                first: userDto.firstname,
-                last: userDto.lastname
-            },
-            registrationDate: new Date(),
-            isBanned: false
+    async createArticleComment(text, author, articleId) {
+        const comment = await CommentModel.create({
+            author, 
+            articleId,
+            text,
+            isModerated: false,
+            creationDate: new Date(),
         });
 
-        return user;
+        return comment;
     }
 
     async updateUser(userDto, id) {

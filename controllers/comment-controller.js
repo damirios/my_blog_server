@@ -32,6 +32,16 @@ class CommentController {
             return next(error);
         }
     }
+
+    createArticleComment = async (req, res, next) => {
+        if (!req.user) {
+            throw new Error("Только авторизованные пользователи могут оставлять комментарии");
+        }
+
+        const articleId = req.articleId;
+        const comment = await commentService.createArticleComment(req.body.text, req.user.id, articleId);
+        res.json(comment);
+    }
     
     // createUser = async (req, res, next) => {
     //     const {login, password, firstname, lastname} = req.body;

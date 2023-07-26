@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -10,6 +12,11 @@ const userRouter = require('./routers/user-router');
 const commentRouter = require('./routers/comment-router');
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL
+}));
 
 // роутеры
 app.use('/user/:userId/comment', (req, res, next) => {

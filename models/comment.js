@@ -7,7 +7,7 @@ const CommentSchema = new Schema({
     text: {type: String, required: true},
     isModerated: {type: Boolean, required: true},
     creationDate: {type: String, required: true},
-    publicationDate: {type: String, required: true},
+    publicationDate: {type: String},
 });
 
 module.exports = model("Comment", CommentSchema);
