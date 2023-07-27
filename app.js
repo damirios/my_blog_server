@@ -10,6 +10,7 @@ const app = express();
 
 const userRouter = require('./routers/user-router'); 
 const commentRouter = require('./routers/comment-router');
+const contentRouter = require('./routers/content-router');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -33,6 +34,16 @@ app.use('/portfolio/:projectId/comment', (req, res, next) => {
     req.projectId = req.params.projectId;
     next();
 }, commentRouter);
+
+app.use('/blog', (req, res, next) => {
+    req.contentType = 'article';
+    next();    
+}, contentRouter);
+
+app.use('/portfolio', (req, res, next) => {
+    req.contentType = 'project';
+    next();    
+}, contentRouter);
 
 app.use('/user', userRouter);
 

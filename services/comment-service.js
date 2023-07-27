@@ -15,10 +15,10 @@ class CommentService {
         return CommentModel.find({projectId});
     }
 
-    async createArticleComment(text, author, articleId) {
+    async createComment(text, author, contentId, contentType) { // contentType = articleId || projectId
         const comment = await CommentModel.create({
             author, 
-            articleId,
+            [contentType]: contentId,
             text,
             isModerated: false,
             creationDate: new Date(),

@@ -6,8 +6,8 @@ const ProjectSchema = new Schema({
     devstack: [{type: String, required: true}],
     poster: {type: String, required: true},
     publicationDate: {type: String, required: true},
-    likes: {type: number, required: true},
-    dislikes: {type: number, required: true},
+    likes: {type: Number, required: true},
+    dislikes: {type: Number, required: true},
     link: {type: String}
 });
 

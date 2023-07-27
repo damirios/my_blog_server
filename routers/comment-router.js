@@ -6,10 +6,8 @@ const router = express.Router();
 router.get('/', (req, res, next) => {
     if (req.userId) {
         commentController.getUserComments(req, res, next);
-    } else if (req.articleId) {
-        commentController.getArticleComments(req, res, next);
-    } else if (req.projectId) {
-        commentController.getProjectComments(req, res, next);
+    } else if (req.articleId || req.projectId) {
+        commentController.getComments(req, res, next);
     }
 });
 
