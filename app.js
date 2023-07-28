@@ -11,6 +11,7 @@ const app = express();
 const userRouter = require('./routers/user-router'); 
 const commentRouter = require('./routers/comment-router');
 const contentRouter = require('./routers/content-router');
+const errorHandler = require('./middlewares/error-handler-middleware');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -19,14 +20,16 @@ app.use(cors({
     origin: process.env.CLIENT_URL
 }));
 
-// роутеры
+// роутеры ============================
 app.use('/user/:userId/comment', (req, res, next) => {
     req.userId = req.params.userId;
+    req.contentType = 'project';
     next();
 }, commentRouter);
 
 app.use('/blog/:articleId/comment', (req, res, next) => {
     req.articleId = req.params.articleId;
+    req.contentType = 'article';
     next();
 }, commentRouter);
 
@@ -46,6 +49,8 @@ app.use('/portfolio', (req, res, next) => {
 }, contentRouter);
 
 app.use('/user', userRouter);
+// обработчик ошибок ==========================================
+app.use(errorHandler);
 
 async function start() {
     try {

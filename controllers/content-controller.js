@@ -15,7 +15,6 @@ class ContentController {
                 const contentDto = {title, description, poster, devstack, link, publicationDate: new Date(), likes: 0, dislikes: 0};
                 content = await contentService.createContent(contentDto, 'project');
             }
-
             res.json(content);
         } catch (error) {
             return next(error);
@@ -93,6 +92,11 @@ class ContentController {
         } catch (error) {
             return next(error);
         }
+    }
+
+    async deleteContent(req, res, next) {
+        const content = await contentService.deleteContent(req.params.id, req.contentType);
+        res.json(content);
     }
 }
 

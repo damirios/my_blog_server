@@ -59,16 +59,17 @@ class CommentService {
     }
 
     async deleteComment(commentId, contentType, contentId) {
-        const comment = await CommentModel.findByIdAndDelete(commentId);
         let content;
         if (contentType === 'article') {
-            content = await ArticleModel.find({id: contentId});
+            content = await ArticleModel.findById(contentId).populate("comments");
         } else if (contentType === 'project') {
-            content = await ProjectModel.find({id: contentId});
+            content = await ProjectModel.findById(contentId).populate("comments");
         }
-        const commentIndex = content.findIndex((el) => el === commentId);
-        content.comments = content.comments.slice(0, commentIndex).concat(content.comments.slice(commentIndex));
+        const commentIndex = content.comments.findIndex((el) => el === commentId);
+        content.comments.splice(commentIndex, 1);
         await content.save();
+
+        const comment = await CommentModel.findByIdAndDelete(commentId);
         return comment;
     }
 

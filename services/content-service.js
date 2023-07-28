@@ -1,5 +1,6 @@
 const ProjectModel = require('../models/project');
 const ArticleModel = require('../models/article');
+const CommentModel = require('../models/comment');
 
 class ContentService {
     constructor() {}
@@ -96,6 +97,23 @@ class ContentService {
         }
 
         await content.save();
+        return content;
+    }
+
+    async deleteContent(contentId, type) {
+        let content;
+        if (type === 'article') {
+            content = await ArticleModel.findByIdAndDelete(contentId).populate("comments");
+        } else if (type === 'project') {
+            content = await ProjectModel.findByIdAndDelete(contentId).populate("comments");
+        }
+
+        if (content && content.comments.length !== 0) {
+            await Promise.all(content.comments.map(commentId => {
+                return new Promise((res, rej) => res(CommentModel.findByIdAndDelete(commentId)));
+            }));
+        }
+
         return content;
     }
 }

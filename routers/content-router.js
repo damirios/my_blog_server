@@ -26,5 +26,6 @@ router.get('/:id', (req, res, next) => {
     }
 });
 router.post('/', contentController.createContent);
+router.delete('/:id', contentController.deleteContent);
 
 module.exports = router;
