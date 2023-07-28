@@ -6,7 +6,8 @@ const ArticleSchema = new Schema({
     poster: {type: String, required: true},
     publicationDate: {type: String, required: true},
     likes: {type: Number, required: true},
-    dislikes: {type: Number, required: true}
+    dislikes: {type: Number, required: true},
+    comments: [{type: Schema.Types.ObjectId, ref: "Comment"}]
 });
 
 module.exports = model("Article", ArticleSchema);

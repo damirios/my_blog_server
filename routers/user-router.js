@@ -5,7 +5,7 @@ const authorizationCheck = require('../middlewares/auth-middleware');
 
 const router = express.Router();
 
-router.get('/', authorizationCheck, userController.getUsers);
+router.get('/', userController.getUsers);
 router.post('/login', userController.login);
 router.get('/refresh', userController.refresh);
 router.get('/:id', userController.getUserById);

@@ -8,7 +8,8 @@ const ProjectSchema = new Schema({
     publicationDate: {type: String, required: true},
     likes: {type: Number, required: true},
     dislikes: {type: Number, required: true},
-    link: {type: String}
+    link: {type: String},
+    comments: [{type: Schema.Types.ObjectId, ref: "Comment"}]
 });
 
 module.exports = model("Project", ProjectSchema);

@@ -1,4 +1,7 @@
 const CommentModel = require('../models/comment');
+const UserModel = require('../models/user');
+const ArticleModel = require('../models/article');
+const ProjectModel = require('../models/project');
 
 class CommentService {
     constructor() {}
@@ -15,43 +18,72 @@ class CommentService {
         return CommentModel.find({projectId});
     }
 
-    async createComment(text, author, contentId, contentType) { // contentType = articleId || projectId
+    async createComment(text, author, contentId, contentType) { // contentType = articleI|| project
+        let content;
+        if (contentType === 'article') {
+            content = await ArticleModel.findById(contentId);
+        } else if (contentType === 'project') {
+            content = await ProjectModel.findById(contentId);
+        }
+
+        if (!content) {
+            throw new Error("Не найден контент, к которому вы пытаетесь оставить комментарий");
+        }
+
+        const contentTypeId = contentType + 'Id';
         const comment = await CommentModel.create({
             author, 
-            [contentType]: contentId,
+            [contentTypeId]: contentId,
             text,
             isModerated: false,
             creationDate: new Date(),
         });
 
+        content.comments.push(comment.id);
+        await content.save();
+
         return comment;
     }
 
-    async updateUser(userDto, id) {
-        const user = await UserModel.findById(id);
-        if (!user) {
-            throw new Error("Пользователь с таким логином не найден");
+    async updateComment(commentId, user, text) {
+        const comment = await CommentModel.findById(commentId).populate('author');
+        if (!user || !comment || user.userId !== comment.author.id) {
+            throw new Error("У вас нет доступа к редактированию этого комментария");
         }
 
-        if (userDto.login) {
-            user.login = userDto.login;
-        }
+        comment.isModerated = false;
+        comment.text = text;
+        comment.save();
 
-        if (userDto.password) {
-            const hashedPassword = await bcrypt.hash(userDto.password, 3);
-            user.password = hashedPassword;
-        }
+        return comment;
+    }
 
-        if (userDto.firstname) {
-            user.name.first = userDto.firstname;
+    async deleteComment(commentId, contentType, contentId) {
+        const comment = await CommentModel.findByIdAndDelete(commentId);
+        let content;
+        if (contentType === 'article') {
+            content = await ArticleModel.find({id: contentId});
+        } else if (contentType === 'project') {
+            content = await ProjectModel.find({id: contentId});
         }
+        const commentIndex = content.findIndex((el) => el === commentId);
+        content.comments = content.comments.slice(0, commentIndex).concat(content.comments.slice(commentIndex));
+        await content.save();
+        return comment;
+    }
 
-        if (userDto.lastname) {
-            user.name.last = userDto.lastname;
-        }
+    async publishComment(id) {
+        const comment = await CommentModel.findById(id);
+        comment.isModerated = true;
+        await comment.save();
+        return comment;
+    }
 
-        await user.save();
-        return user;
+    async unpublishComment(id) {
+        const comment = await CommentModel.findById(id);
+        comment.isModerated = false;
+        await comment.save();
+        return comment;
     }
 }
 
